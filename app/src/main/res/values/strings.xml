@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">UPOSHTHIT</string>
+    <string name="select_subject">Select Subject</string>
+    <string name="create_class">Create Class</string>
+    <string name="logo_description">UPOSTHIT</string>
+
+
+    <string-array name="subjects_array">
+        <item>OPERATING SYSTEMS</item>
+        <item>COMPUTER NETWORK</item>
+        <item>OOP USING JAVA</item>
+        <item>SSAD</item>
+        <item>DBMS</item>
+    </string-array>
+
+
+</resources>

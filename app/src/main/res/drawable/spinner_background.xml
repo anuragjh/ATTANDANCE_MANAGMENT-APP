@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Reference to your custom background -->
+    <item android:drawable="@drawable/edittext_background" />
+    <!-- Dropdown arrow -->
+    <item android:right="8dp" android:top="8dp" android:bottom="8dp">
+        <bitmap
+            android:gravity="center_vertical|end"
+            android:src="@android:drawable/arrow_down_float" />
+    </item>
+</layer-list>

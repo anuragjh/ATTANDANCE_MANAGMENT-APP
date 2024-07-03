@@ -1,0 +1,13 @@
+<!-- button_background_logout.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:startColor="#FF7043"
+        android:endColor="#FF5722"
+        android:angle="45"/>
+    <corners android:radius="8dp" />
+    <padding
+        android:left="16dp"
+        android:top="8dp"
+        android:right="16dp"
+        android:bottom="8dp" />
+</shape>

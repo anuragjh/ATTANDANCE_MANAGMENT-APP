@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".OtpActivity">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/logo"
+        android:contentDescription="@string/logo_description"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="VERIFICATION"
+        android:layout_below="@id/logo"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/sign_in_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="OTP SENT TO REGISTERED PHONE NUMBER!!"
+        android:textColor="#808080"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/otpEditText"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/sign_in_prompt"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:hint="ENTER OTP"
+        android:background="@drawable/edittext_background"
+        android:padding="10dp"
+        android:inputType="textPersonName"
+        android:textSize="16sp"/>
+
+
+
+    <Button
+        android:id="@+id/verifyOtpButton"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/otpEditText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="VERIFY "
+        android:background="#FFA500"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"/>
+
+
+</RelativeLayout>
