@@ -13,35 +13,45 @@
         <!-- Orange Header Section with curve -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:background="#FFA500"
+            android:textColor="#FFFFFF"
+            android:layout_height="300dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+        <ImageView
+                android:id="@+id/logo"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:src="@drawable/lo"
+                android:contentDescription="@string/logo_description"/>
+
+            <TextView
+                android:id="@+id/textViewWelcomestd"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FFB74D"
-                android:elevation="10dp"
-                android:padding="16dp">
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Hello,"
+                android:layout_below="@id/logo"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textViewWelcomestd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="30sp"
-                    android:text="hello,"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="29dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@android:color/black"
-                   />
-            </LinearLayout>
-
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewWelcomestd"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="DONT FORGOT TO GIVE YOUR ATTENDANCE!!"
+                android:textColor="#808080"
+                android:textSize="14sp" />
 
         </RelativeLayout>
+
+
 
         <!-- Main Content Section -->
         <LinearLayout
@@ -55,18 +65,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewClasses"
                 android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginTop="-150dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="-50dp"
                 android:layout_marginBottom="12dp" />
-
-            <TextView
-                android:id="@+id/textViewWelcomeStudent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="MORE OPTIONS"
-                android:textColor="@android:color/black"
-                android:textSize="24sp" />
 
             <Button
                 android:id="@+id/buttonCheckAttendance"
@@ -90,21 +91,13 @@
                 android:id="@+id/buttonLogout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="logout"
-                android:background="@drawable/button_background_logout"
-                android:text="Logout"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="-90dp"
+                android:background="@drawable/button_background_logout"
+                android:onClick="logout"
+                android:text="Logout"
                 android:textColor="@android:color/white" />
         </LinearLayout>
-        <!-- Curve Shape at the Bottom -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="-61dp"
-            android:background="@drawable/bottom_curve_shape"
-            android:padding="5dp"
-            />
 
     </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

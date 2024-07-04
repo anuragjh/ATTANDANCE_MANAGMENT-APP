@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void navigateToUserActivity(String userType, String displayName) {
-        Class<?> userActivityClass = userType.equals(USER_TEACHER) ? TeacherActivity.class : StudentActivity.class;
+        Class<?> userActivityClass = userType.equals(USER_TEACHER) ? TeacherActivity.class : LocationActivity.class;
         Intent intent = new Intent(MainActivity.this, userActivityClass);
         intent.putExtra("displayName", displayName);
         startActivity(intent);

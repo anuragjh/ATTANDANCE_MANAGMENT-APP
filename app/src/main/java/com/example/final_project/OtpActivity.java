@@ -69,14 +69,6 @@ public class OtpActivity extends AppCompatActivity {
 
         fetchPhoneNumberAndSendOtp();
 
-//        goBack.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(OtpActivity.this, MainActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
         verifyOtpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

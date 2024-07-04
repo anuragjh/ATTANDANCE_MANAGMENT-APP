@@ -16,20 +16,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class StudentActivity extends AppCompatActivity implements ClassesAdapter.OnAttendanceButtonClickListener {
-
     private static final String TAG = "StudentActivity";
     private RecyclerView recyclerView;
     private TextView textViewWelcomeStudent;
@@ -53,24 +46,18 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
         recyclerView.setAdapter(classesAdapter);
 
         swipeRefreshLayout = findViewById(R.id.swiperefresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchClasses();
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::fetchClasses);
 
         db = FirebaseFirestore.getInstance();
 
         String displayName = getIntent().getStringExtra("displayName");
         textViewWelcomeStudent.setText("Hello, " + displayName);
 
-        buttonEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(StudentActivity.this, EditPasswordActivity.class);
-                startActivity(intent);
-            }
+        buttonEditProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(StudentActivity.this, EditPasswordActivity.class);
+            intent.putExtra("displayName", displayName);
+            startActivity(intent);
+            finish();
         });
 
         fetchClasses();
@@ -78,52 +65,44 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
 
     private void fetchClasses() {
         swipeRefreshLayout.setRefreshing(true);
-        CollectionReference classesRef = db.collection("classes");
-        Query query = classesRef.orderBy("subjectName", Query.Direction.ASCENDING);
+        db.collection("classes")
+                .get()
+                .addOnCompleteListener(task -> {
+                    swipeRefreshLayout.setRefreshing(false);
 
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                swipeRefreshLayout.setRefreshing(false);
-
-                if (task.isSuccessful()) {
-                    classList.clear();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        ClassModelR classModelR = document.toObject(ClassModelR.class);
-                        classModelR.setId(document.getId()); // Set the document ID as class ID
-                        checkAttendance(classModelR); // Check if attendance is already marked
-                        classList.add(classModelR);
+                    if (task.isSuccessful()) {
+                        classList.clear();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            ClassModelR classModelR = document.toObject(ClassModelR.class);
+                            classModelR.setId(document.getId());
+                            checkAttendance(classModelR);
+                            classList.add(classModelR);
+                        }
+                        classesAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e(TAG, "Error fetching classes", task.getException());
                     }
-                    classesAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e(TAG, "Error fetching classes", task.getException());
-                }
-            }
-        });
+                });
     }
 
     private void checkAttendance(ClassModelR classModelR) {
         String currentUser = getIntent().getStringExtra("displayName");
-        db.collection("attendance_user")
+        db.collection("students")
                 .document(classModelR.getId())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                String teacherName = document.getString("teacherName");
-                                String subjectName = document.getString("subjectName");
-                                String status = document.getString("status");
-
-                                if (currentUser.equals(teacherName) && subjectName.equals(classModelR.getSubjectName()) && status.equals("Present")) {
-                                    classModelR.setAttendanceDone(true);
-                                }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            StudentAttendanceModel attendanceModel = document.toObject(StudentAttendanceModel.class);
+                            if (attendanceModel != null && attendanceModel.getPresent() != null &&
+                                    attendanceModel.getPresent().contains(currentUser)) {
+                                classModelR.setAttendanceDone(true);
                             }
-                        } else {
-                            Log.e(TAG, "Error checking attendance", task.getException());
                         }
+                        classesAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e(TAG, "Error checking attendance", task.getException());
                     }
                 });
     }
@@ -131,16 +110,14 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
     @Override
     public void onAttendanceButtonClick(int position) {
         ClassModelR selectedClass = classList.get(position);
-        if (!selectedClass.isAttendanceDone()) {
-            markAttendance(selectedClass);
-        }
+        markAttendance(selectedClass);
     }
 
     private void markAttendance(ClassModelR selectedClass) {
         String currentUser = getIntent().getStringExtra("displayName");
         String classId = selectedClass.getId();
 
-        db.collection("attendance_user")
+        db.collection("students")
                 .document(classId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -149,38 +126,63 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                if (document.contains(currentUser)) {
+                                StudentAttendanceModel attendanceModel = document.toObject(StudentAttendanceModel.class);
+                                if (attendanceModel != null && attendanceModel.getPresent() != null &&
+                                        attendanceModel.getPresent().contains(currentUser)) {
+                                    // If student is already present, update button text and UI
+                                    selectedClass.setAttendanceDone(true);
+                                    classesAdapter.updateAttendanceStatus(classId, true);
                                     Log.d(TAG, "Attendance already marked for current user in this class.");
                                 } else {
-                                    db.collection("attendance_user")
-                                            .document(classId)
-                                            .update(currentUser, true)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        selectedClass.setAttendanceDone(true);
-                                                        classesAdapter.notifyDataSetChanged();
-                                                    } else {
-                                                        Log.e(TAG, "Error marking attendance", task.getException());
+                                    // Student is not marked present, add them to attendance list
+                                    List<String> presentList = attendanceModel != null ? attendanceModel.getPresent() : new ArrayList<>();
+                                    if (!presentList.contains(currentUser)) {
+                                        presentList.add(currentUser);
+
+                                        StudentAttendanceModel newAttendanceModel = new StudentAttendanceModel(
+                                                selectedClass.getTeacherName(),
+                                                selectedClass.getSubjectName(),
+                                                presentList
+                                        );
+
+                                        db.collection("students")
+                                                .document(classId)
+                                                .set(newAttendanceModel)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            selectedClass.setAttendanceDone(true);
+                                                            // Update button text and UI
+                                                            classesAdapter.updateAttendanceStatus(classId, true);
+                                                        } else {
+                                                            Log.e(TAG, "Error marking attendance", task.getException());
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
+                                    }
                                 }
                             } else {
-                                Map<String, Object> attendanceData = new HashMap<>();
-                                attendanceData.put(currentUser, true);
-                                attendanceData.put("class_id", classId);
+                                // Document does not exist, create new attendance entry
+                                List<String> presentList = new ArrayList<>();
+                                presentList.add(currentUser);
 
-                                db.collection("attendance_user")
+                                StudentAttendanceModel newAttendanceModel = new StudentAttendanceModel(
+                                        selectedClass.getTeacherName(),
+                                        selectedClass.getSubjectName(),
+                                        presentList
+                                );
+
+                                db.collection("students")
                                         .document(classId)
-                                        .set(attendanceData)
+                                        .set(newAttendanceModel)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
                                                     selectedClass.setAttendanceDone(true);
-                                                    classesAdapter.notifyDataSetChanged();
+                                                    // Update button text and UI
+                                                    classesAdapter.updateAttendanceStatus(classId, true);
                                                 } else {
                                                     Log.e(TAG, "Error marking attendance", task.getException());
                                                 }
@@ -194,6 +196,7 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
                 });
     }
 
+
     public void logout(View view) {
         SharedPreferences sharedPreferences = getSharedPreferences("my_shared_prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -205,5 +208,3 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
         finish();
     }
 }
-
-

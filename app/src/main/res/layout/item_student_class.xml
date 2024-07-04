@@ -4,7 +4,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-    android:background="#FFA500"
         android:padding="16dp">
 
     <TextView
@@ -16,7 +15,22 @@
         android:textSize="24sp"
         android:textColor="@android:color/black"
         android:padding="8dp"
+        android:elevation="5dp"
         android:background="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/textViewSubjectName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Teacher Name"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textViewTeacherName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subject Name"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/buttonAttendance"
@@ -24,6 +38,8 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
         android:text="Give Attendance"
+        android:padding="8dp"
+        android:elevation="5dp"
         android:background="@drawable/button_background"
         android:layout_marginTop="8dp"/>
 </LinearLayout>
