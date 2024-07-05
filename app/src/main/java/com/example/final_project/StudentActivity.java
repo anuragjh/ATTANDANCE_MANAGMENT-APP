@@ -26,7 +26,7 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
     private static final String TAG = "StudentActivity";
     private RecyclerView recyclerView;
     private TextView textViewWelcomeStudent;
-    private Button buttonEditProfile;
+    private Button buttonEditProfile,buttonCheckAttendance;
     private FirebaseFirestore db;
     private List<ClassModelR> classList;
     private ClassesAdapter classesAdapter;
@@ -38,6 +38,7 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
         setContentView(R.layout.activity_student);
 
         textViewWelcomeStudent = findViewById(R.id.textViewWelcomestd);
+        buttonCheckAttendance = findViewById(R.id.buttonCheckAttendance);
         recyclerView = findViewById(R.id.recyclerViewClasses);
         buttonEditProfile = findViewById(R.id.buttonEditProfile);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -55,6 +56,13 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
 
         buttonEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(StudentActivity.this, EditPasswordActivity.class);
+            intent.putExtra("displayName", displayName);
+            startActivity(intent);
+            finish();
+        });
+
+        buttonCheckAttendance.setOnClickListener(v -> {
+            Intent intent = new Intent(StudentActivity.this, CheckAttendance.class);
             intent.putExtra("displayName", displayName);
             startActivity(intent);
             finish();
@@ -110,8 +118,18 @@ public class StudentActivity extends AppCompatActivity implements ClassesAdapter
     @Override
     public void onAttendanceButtonClick(int position) {
         ClassModelR selectedClass = classList.get(position);
-        markAttendance(selectedClass);
+        redirectToOtpActivity(selectedClass);
     }
+
+    private void redirectToOtpActivity(ClassModelR selectedClass) {
+        Intent intent = new Intent(StudentActivity.this, OtpActivity.class);
+        intent.putExtra("classId", selectedClass.getId());
+        intent.putExtra("teacherName", selectedClass.getTeacherName());
+        intent.putExtra("subjectName", selectedClass.getSubjectName());
+        intent.putExtra("displayName", getIntent().getStringExtra("displayName"));
+        startActivity(intent);
+    }
+
 
     private void markAttendance(ClassModelR selectedClass) {
         String currentUser = getIntent().getStringExtra("displayName");

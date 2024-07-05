@@ -15,15 +15,15 @@
             android:layout_width="match_parent"
             android:background="#FFA500"
             android:textColor="#FFFFFF"
-            android:layout_height="300dp">
+            android:layout_height="250dp">
 
         <ImageView
                 android:id="@+id/logo"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
-                android:src="@drawable/lo"
+                android:src="@drawable/logob"
                 android:contentDescription="@string/logo_description"/>
 
             <TextView
@@ -58,7 +58,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:background="#e7decc"
             android:orientation="vertical"
+            android:elevation="70dp"
             android:padding="16dp">
 
 
@@ -66,13 +68,16 @@
                 android:id="@+id/recyclerViewClasses"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginTop="-50dp"
-                android:layout_marginBottom="12dp" />
+                android:elevation="4dp"
+                android:background="@color/white"
+                android:layout_marginTop="-90dp"
+                android:layout_marginBottom="5dp" />
 
             <Button
                 android:id="@+id/buttonCheckAttendance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/button_background"
                 android:text="Check Attendance"
@@ -83,6 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/button_background"
                 android:text="Edit password"
                 android:textColor="@android:color/white" />

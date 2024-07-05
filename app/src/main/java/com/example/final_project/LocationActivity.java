@@ -17,6 +17,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class LocationActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
@@ -25,10 +30,12 @@ public class LocationActivity extends AppCompatActivity {
 
     private String userName;
 
-    private double latMin = 26.0;
-    private double latMax = 26.9;
-    private double lonMin = 86.0;
-    private double lonMax = 86.9;
+    private double latMin;
+    private double latMax;
+    private double lonMin;
+    private double lonMax;
+
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +46,8 @@ public class LocationActivity extends AppCompatActivity {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         userName = getIntent().getStringExtra("displayName");
+
+        db = FirebaseFirestore.getInstance();
 
         locationListener = new LocationListener() {
             @Override
@@ -55,6 +64,30 @@ public class LocationActivity extends AppCompatActivity {
             @Override
             public void onProviderDisabled(@NonNull String provider) {}
         };
+
+        fetchLocationBounds();
+    }
+
+    private void fetchLocationBounds() {
+        db.collection("location").document("classRoomBounds").get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                latMin = document.getDouble("latMin");
+                                latMax = document.getDouble("latMax");
+                                lonMin = document.getDouble("lonMin");
+                                lonMax = document.getDouble("lonMax");
+                            } else {
+                                Toast.makeText(LocationActivity.this, "Location bounds not found in database", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(LocationActivity.this, "Error fetching location bounds: " + task.getException(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     public void getLocation(View view) {

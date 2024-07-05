@@ -37,6 +37,7 @@
         <activity android:name=".OtpActivity" />
         <activity android:name=".EditPasswordActivity" />
         <activity android:name=".LocationActivity" />
+        <activity android:name=".CheckAttendance" />
     </application>
 
 </manifest>
